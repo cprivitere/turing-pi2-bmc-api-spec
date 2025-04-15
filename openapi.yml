@@ -1,0 +1,86 @@
+openapi: "3.1.1"
+info:
+  title: Turing Pi 2 BMC API
+  description: API for Turing Pi 2 BMC
+  version: "1.1"
+servers:
+  - url: https://turingpi.local/
+    description: Turing Pi 2 BMC API
+paths:
+  /api/bmc:
+    get:
+      security:
+        - basicAuth: []
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api:
+                    type: string
+                    description: API version
+                  version:
+                    type: string
+                    description: Daemon version
+                  buildtime:
+                    type: string
+                    format: date-time
+                    description: UTC+0 timestamp of build date
+                  buildroot:
+                    type: string
+                    description: Buildroot version
+                  build_version:
+                    type: string
+                    description: Firmware version
+                  board_version:
+                    type: string
+                    description: Board version
+                  board_revision:
+                    type: string
+                    description: Board revision
+      parameters:
+        - name: opt
+          in: query
+          required: true
+          description: Operation to perform
+          schema:
+            type: string
+            enum:
+              - get
+              - set
+        - name: type
+          in: query
+          required: true
+          description: Type of operation
+          schema:
+            type: string
+            enum:
+              - usb_boot
+              - clear_usb_boot
+              - network
+              - nodeinfo
+              - node_to_msd
+              - other
+              - power
+              - reboot
+              - reload
+              - sdcard
+              - uart
+              - usb
+              - info
+              - about
+              - flash
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic
