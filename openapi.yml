@@ -7,6 +7,32 @@ servers:
   - url: https://turingpi.local/
     description: Turing Pi 2 BMC API
 paths:
+  /api/bmc/authenticate:
+    post:
+      summary: Authenticate and get bearer token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Bearer token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        "401":
+          description: Invalid credentials
   /api/bmc:
     get:
       security:
@@ -18,30 +44,16 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  api:
-                    type: string
-                    description: API version
-                  version:
-                    type: string
-                    description: Daemon version
-                  buildtime:
-                    type: string
-                    format: date-time
-                    description: UTC+0 timestamp of build date
-                  buildroot:
-                    type: string
-                    description: Buildroot version
-                  build_version:
-                    type: string
-                    description: Firmware version
-                  board_version:
-                    type: string
-                    description: Board version
-                  board_revision:
-                    type: string
-                    description: Board revision
+                type: array
+                items:
+                  type: object
+                  properties:
+                    response:
+                      type: object
+        "401":
+          description: Authentication required
+        "400":
+          description: Bad request
       parameters:
         - name: opt
           in: query
@@ -52,6 +64,7 @@ paths:
             enum:
               - get
               - set
+              - power
         - name: type
           in: query
           required: true
@@ -74,6 +87,56 @@ paths:
               - info
               - about
               - flash
+        - in: query
+          name: node
+          schema:
+            type: integer
+          required: false
+          description: Node number (if applicable)
+        - in: query
+          name: mode
+          schema:
+            type: integer
+          required: false
+          description: USB mode (if applicable)
+        - in: query
+          name: cmd
+          schema:
+            type: string
+          required: false
+          description: UART command (if applicable)
+        - in: query
+          name: encoding
+          schema:
+            type: string
+            enum:
+              - utf8
+              - utf16
+              - utf16le
+              - utf16be
+              - utf32
+              - utf32le
+              - utf32be
+          required: false
+          description: UART encoding (if applicable)
+        - in: query
+          name: length
+          schema:
+            type: integer
+          required: false
+          description: Image length in bytes (for flash/firmware)
+        - in: query
+          name: local
+          schema:
+            type: boolean
+          required: false
+          description: If present, image file is read from local filesystem (for flash/firmware)
+        - in: query
+          name: file
+          schema:
+            type: string
+          required: false
+          description: Local file path (for flash/firmware)
 
 components:
   securitySchemes:
