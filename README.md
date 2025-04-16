@@ -1,0 +1,1 @@
+First pass at an OpenAPI spec for the Turing Pi 2 BMC API, however it probably won't be useful as everything is structured as queries to a single endpoint, thus making the spec very difficult to write and unlikely to be useful to any downstream tools like code generators.
